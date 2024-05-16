@@ -1,0 +1,82 @@
+---
+name: Deploy Staging
+
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - "cdk.json"
+      - "**/cdk.json"
+      - "**/Dockerfile"
+      - "package.json"
+      - "package-lock.json"
+      - "**/package.json"
+      - "**/package-lock.json"
+      - "**/nest-cli.json"
+      - "**/tconfig.json"
+      - "**/tconfig.build.json"
+      - "**.ts"
+      - "**/jest-e2e.json"
+      - "**/jest.config.json"
+      - "!README.md"
+      - "!**/README.md"
+      - "!**/.prettierrc"
+      - "!**/.eslintrc.js"
+      - "!**ignore"
+      - "!node_modules/**"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+      id-token: write
+    environment:
+      name: staging
+      url: ${{ steps.extract-url.outputs.API_GATEWAY_URL }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: configure credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.ROLE_ARN }}
+          aws-region: eu-west-1
+
+      - name: configure permissions
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: installing dependencies
+        run: |
+          npm ci
+          npm i -g aws-cdk
+
+      - name: synth
+        run: cdk synth
+        env: 
+          VPC_ID: ${{ vars.VPC_ID }}
+          RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
+          RDS_USERNAME: ${{ secrets.RDS_USERNAME }}
+
+      - name: deploy
+        run: cdk deploy --require-approval never --context stackName=GsharimBackendStack-staging
+        env: 
+          VPC_ID: ${{ vars.VPC_ID }}
+          RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
+          RDS_USERNAME: ${{ secrets.RDS_USERNAME }}
+
+      - name: Extract API Gateway URL
+        id: extract-url
+        run: |
+          export STACK_NAME=GsharimBackendStack-stating
+          export GATEWAY_URL=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --query 'Stacks[0].Outputs[1].OutputValue' | cut -d'"' -f 2)
+          export CORE_GATEWAY_URL=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --query 'Stacks[0].Outputs[0].OutputValue' | cut -d'"' -f 2)
+          echo "GATEWAY URL: $GATEWAY_URL"
+          echo "API_GATEWAY_URL=$GATEWAY_URL" >> $GITHUB_OUTPUT
+          echo "CORE API GATEWAY URL: $CORE_GATEWAY_URL"
+          echo "CORE_API_GATEWAY_URL=$CORE_GATEWAY_URL" >> $GITHUB_OUTPUT

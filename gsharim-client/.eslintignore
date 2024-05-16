@@ -1,0 +1,4 @@
+public/pyodide
+build/
+node_modules/
+**/*.js

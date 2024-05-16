@@ -1,0 +1,39 @@
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+name: sonar scan
+jobs:
+  sonarqube:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: SonarQube Scan
+      uses: sonarsource/sonarqube-scan-action@master
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+    - name: Sonarqube quality gate
+      uses: sonarsource/sonarqube-quality-gate-action@master
+      timeout-minutes: 5
+      env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+  security:
+    runs-on: ubuntu-latest
+    name: security
+    steps:
+      - uses: actions/checkout@v3
+      - uses: DigitalIDF/Cloud-Security-Task@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}          
+          SecretScanner-run: true        
+          SAST-run: true         
+          SCA-run: true
+          code-lang: javascript 
+          package-dir: ./

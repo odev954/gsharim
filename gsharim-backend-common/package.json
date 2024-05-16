@@ -1,0 +1,37 @@
+{
+	"name": "@eco8200/backend-common",
+	"version": "4.0.2",
+	"description": "common types and abstractions for backend",
+	"main": "index.js",
+	"scripts": {
+		"prebuild": "npm ci",
+		"build": "tsc",
+		"postbuild": "node lib/setup.js",
+		"lint": "eslint --ext .ts"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/eco8200/gsharim-backend-common.git"
+	},
+	"publishConfig": {
+		"directory": "lib"
+	},
+	"author": "eco8200",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/eco8200/gsharim-backend-common/issues"
+	},
+	"homepage": "https://github.com/eco8200/gsharim-backend-common#readme",
+	"devDependencies": {
+		"@types/node": "^18.14.0",
+		"@types/uuid": "^9.0.1"
+	},
+	"dependencies": {
+		"@aws-sdk/client-dynamodb": "^3.341.0",
+		"@eco8200/data-models": "^17.0.2",
+		"@nestjs/common": "^9.4.2",
+		"axios": "^1.4.0",
+		"uuid": "^9.0.0",
+		"zod": "^3.21.4"
+	}
+}

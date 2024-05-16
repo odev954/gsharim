@@ -1,0 +1,8 @@
+.github/
+.github/*
+*/.github/*
+src/
+.gitignore
+tsconfig.json
+lib/setup.*
+setup.*

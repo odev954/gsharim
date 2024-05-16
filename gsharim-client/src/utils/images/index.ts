@@ -1,0 +1,1 @@
+export { backgroundSvg } from "./backgroundSvg";

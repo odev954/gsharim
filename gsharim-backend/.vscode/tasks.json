@@ -1,0 +1,25 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "setup contentManager debug",
+			"command": "ts-node ${workspaceFolder}/debugging/scripts/src/init.ts dynamo"
+		},
+		{
+			"type": "shell",
+			"label": "clean contentManager debug",
+			"command": "ts-node ${workspaceFolder}/debugging/scripts/src/clear.ts dynamo"
+		},
+		{
+			"type": "shell",
+			"label": "setup contentProvider debug",
+			"command": "ts-node ${workspaceFolder}/debugging/scripts/src/init.ts jsonServer"
+		},
+		{
+			"type": "shell",
+			"label": "clean contentProvider debug",
+			"command": "ts-node ${workspaceFolder}/debugging/scripts/src/clear.ts jsonServer"
+		}
+	]
+}

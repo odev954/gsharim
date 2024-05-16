@@ -1,0 +1,41 @@
+import { LayoutType } from "@eco8200/data-models";
+import { useMemo } from "react";
+import { validateArrayLength } from "utils/common";
+import { defaultInitialSize } from "../consts";
+import { LayoutProps } from "../types";
+import {
+	layoutSizePercentageToSplitPaneSizes,
+	validateLayoutType,
+} from "../utils";
+import SplitPane from "../components/splitPane";
+
+export default function ThreeVerticalSplit({
+	children,
+	layout,
+}: LayoutProps): JSX.Element {
+	if (!validateArrayLength(children, 3))
+		throw new Error("Invalid amount of sections");
+
+	if (!validateLayoutType(layout, LayoutType.ThreeVerticalSplit))
+		throw new Error("Invalid layout type");
+
+	const [rightSectionChild, middleSectionChild, leftSectionChild] = children;
+
+	const sizes = useMemo(
+		() =>
+			layout.sizes
+				? layoutSizePercentageToSplitPaneSizes(layout.sizes)
+				: defaultInitialSize,
+		[layout.sizes]
+	);
+
+	return (
+		<SplitPane split="vertical" initialSizes={sizes}>
+			{rightSectionChild}
+			<SplitPane split="vertical" initialSizes={sizes}>
+				{middleSectionChild}
+				{leftSectionChild}
+			</SplitPane>
+		</SplitPane>
+	);
+}

@@ -1,0 +1,89 @@
+---
+name: Create Branch Stack (Full Deploy)
+
+on:
+  pull_request:
+    branches:
+      - dev
+    types:
+      - opened
+      - reopened
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      actions: write
+      contents: write
+      id-token: write
+    environment:
+      name: development (PR)
+      url: ${{ steps.extract-url.outputs.API_GATEWAY_URL }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: configure credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.ROLE_ARN }}
+          aws-region: eu-west-1
+          role-duration-seconds: 14400
+
+      - name: configure permissions
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: fomatting stack name
+        id: format-stack-name
+        uses: frabert/replace-string-action@v2
+        with:
+          pattern: "[^A-Za-z0-9-]"
+          flags: "g"
+          string: GsharimBackendStack-${{ github.head_ref || github.ref_name }}
+          replace-with: "-"
+
+      - name: installing dependencies
+        run: |
+          npm ci
+          npm i -g aws-cdk
+
+      - name: synth
+        run: cdk synth
+        env: 
+          VPC_ID: ${{ vars.VPC_ID }}
+          RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
+          RDS_USERNAME: ${{ secrets.RDS_USERNAME }}
+
+      - name: deploy
+        run: cdk deploy --require-approval never --context stackName=${{ steps.format-stack-name.outputs.replaced }}
+        env: 
+          VPC_ID: ${{ vars.VPC_ID }}
+          RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
+          RDS_USERNAME: ${{ secrets.RDS_USERNAME }}
+
+      - name: Extract API Gateway URL
+        if: ${{ github.event_name == 'pull_request' }}
+        id: extract-url
+        run: |
+          export STACK_NAME=${{ steps.format-stack-name.outputs.replaced }}
+          export GATEWAY_URL=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --query 'Stacks[0].Outputs[1].OutputValue' | cut -d'"' -f 2)
+          export CORE_GATEWAY_URL=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --query 'Stacks[0].Outputs[0].OutputValue' | cut -d'"' -f 2)
+          echo "GATEWAY URL: $GATEWAY_URL"
+          echo API_GATEWAY_URL=$GATEWAY_URL >> $GITHUB_OUTPUT
+          echo "CORE API GATEWAY URL: $CORE_GATEWAY_URL"
+          echo CORE_API_GATEWAY_URL=$CORE_GATEWAY_URL >> $GITHUB_OUTPUT
+
+      - name: Comment new URLs on PR
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            The branch stack was deployed to: 
+            - app endpoint (`GsharimApi`): [${{ steps.extract-url.outputs.API_GATEWAY_URL }}](${{ steps.extract-url.outputs.API_GATEWAY_URL }})
+            - core endpoint (`GsharimCoreApi`): [${{ steps.extract-url.outputs.CORE_API_GATEWAY_URL }}](${{ steps.extract-url.outputs.CORE_API_GATEWAY_URL }})
+
+            Enjoy! :rocket:
+          reactions: eyes, rocket

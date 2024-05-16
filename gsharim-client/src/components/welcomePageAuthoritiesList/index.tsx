@@ -1,0 +1,1 @@
+export { WelcomePageAuthoritiesList } from "./welcomePageAuthoritiesList";

@@ -1,0 +1,24 @@
+name: PR Teardown Preview
+
+on: 
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+    
+
+jobs:
+  teardown-preview:
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: "--max_old_space_size=4096"
+    steps:
+      - uses: actions/checkout@v3
+      - name: convert branch to url
+        id: generateUrl
+        run: |
+          branch_name=${{ github.head_ref || github.ref_name }}
+          BRANCH_URL="${branch_name//\//-}"
+          echo URL=$BRANCH_URL-gsharim.surge.sh >> $GITHUB_OUTPUT
+      - name: teardown from gsharim.surge.sh
+        run: |
+          npx surge teardown ${{ steps.generateUrl.outputs.URL }} --token ${{ secrets.surge_token }}

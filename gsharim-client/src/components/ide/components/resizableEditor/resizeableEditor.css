@@ -1,0 +1,45 @@
+
+.cm-gutters {
+    background: #2F3136 !important;
+}
+
+.cm-gutter-lint:empty {
+    width: 0 !important;
+}
+
+.cm-foldGutter {
+    width: 0 !important;
+}
+
+.cm-lineNumbers{
+    width: 0 !important;
+}
+
+.cm-lint-marker-error {
+    content: url("../../../../assets/ide/errorGutter.svg") !important;
+}
+
+.ͼ15 {
+    background: #36393F !important;
+}
+
+.cm-selectionBackground {
+    background: rgba(0, 0, 0, 0.2) !important;
+}
+
+
+.cm-line:has(.cm-lintRange-error){
+    background: #391d1d !important;
+}
+
+.cm-lintRange-error {
+    pointer-events: none !important;
+}
+
+.ͼ1 .cm-gutter {
+    display: unset !important;
+}
+
+.cm-current-python-running-line {
+    background: #d2b40b40 !important;
+}

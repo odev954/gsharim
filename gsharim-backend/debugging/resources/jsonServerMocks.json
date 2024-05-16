@@ -1,0 +1,29 @@
+{
+    "tasks": [
+        {
+            "id": "3d12716c-c18b-4804-942c-8db069d3d4b9",
+            "variant": 0,
+            "lessonId": "4edcf46f-9126-4039-9eb2-1124980d6f88",
+            "title": "task1",
+            "description": "task mock 1",
+            "sectionGroupId": "fa129f7e-e227-4f2e-a9a2-337dfac24ecd"
+        }
+    ],
+    "sectionGroups": [
+        {
+            "id": "fa129f7e-e227-4f2e-a9a2-337dfac24ecd",
+            "sections": [
+                {
+                    "id": "58aec792-da89-43ee-a4d5-b3202827147e",
+                    "variant": "SlideSection",
+                    "googleSlideId": "1_YjHqM2GQQC-ypK0rH4VLmTUEtOG2env",
+                    "slideStartIndex": 101,
+                    "options": { "showControls": true }
+                }
+            ],
+            "layout": {
+                "layoutType": 1
+            }
+        }
+    ]
+}

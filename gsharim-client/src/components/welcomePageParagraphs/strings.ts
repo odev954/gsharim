@@ -1,0 +1,10 @@
+export const firstTitle = "components.welcomePageParagraphs.firstTitle";
+export const secondTitle = "components.welcomePageParagraphs.secondTitle";
+export const thirdTitle = "components.welcomePageParagraphs.thirdTitle";
+export const firstText = "components.welcomePageParagraphs.firstText";
+export const secondText = "components.welcomePageParagraphs.secondText";
+export const thirdText = "components.welcomePageParagraphs.thirdText";
+export const firstImageAlt = "components.welcomePageParagraphs.firstImageAlt";
+export const secondImageAlt = "components.welcomePageParagraphs.secondImageAlt";
+export const thirdImageAlt = "components.welcomePageParagraphs.thirdImageAlt";
+export const rectImageAlt = "components.welcomePageParagraphs.rectImageAlt";

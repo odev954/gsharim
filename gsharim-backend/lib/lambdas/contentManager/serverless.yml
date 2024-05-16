@@ -1,0 +1,24 @@
+---
+service: debugTS
+provider:
+    endpointType: PRIVATE
+    name: aws
+    runtime: nodejs16.x
+    region: eu-west-1
+    environment:
+        TASK_COLLECTION: TasksTable
+        REGION: localhost
+        DB_ENDPOINT: http://localhost:8000
+
+plugins:
+    - serverless-plugin-typescript
+
+functions:
+    functionToDebug:
+        kmsKeyArn: arn:aws:kms:us-east-1:XXXXXX:key/some-hash
+        tags:
+            service: contentManager
+        role: arn:aws:iam::XXXXXX:role/role
+        onError: arn:aws:sns:us-east-1:XXXXXX:sns-topic
+        tracing: Active
+        handler: src/main.handler

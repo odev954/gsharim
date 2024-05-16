@@ -1,0 +1,41 @@
+name: Dev Publish
+
+on:
+    push:
+        branches:
+            - major-*
+            - minor-*
+            - patch-*
+        paths:
+            - "package.json"
+            - "package-lock.json"
+            - "README.md"
+            - "**.ts"
+            - "**ignore"
+            - ".releaserc.json"
+            - "!node_modules/**"
+
+jobs:
+    publish-pkg:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+            - name: setup git config
+              run: |
+                  git config user.name "GitHub Actions Bot"
+                  git config user.email "<>"
+            - run: npm version prerelease --preid=${{ github.head_ref || github.ref_name }} --no-git-tag-version
+            - uses: stefanzweifel/git-auto-commit-action@v4
+              with:
+                  commit_message: automated version updated
+                  branch: ${{ github.head_ref || github.ref_name }}
+                  file_pattern: "package*.json"
+            - run: npm run build
+            - uses: JS-DevTools/npm-publish@v1
+              with:
+                  token: ${{ secrets.NPM_AUTOMATION_TOKEN }}
+                  access: "public"
+                  package: './lib/package.json'

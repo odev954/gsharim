@@ -1,0 +1,14 @@
+export const RightFunctionName = "Right";
+export const LeftFunctionName = "Left";
+export const UpFunctionName = "Up";
+export const DownFunctionName = "Down";
+export const PickupDropFunctionName = "PickupDrop";
+export const InterractFunctionName = "Interract";
+export const DanceFunctionName = "Dance";
+export const GetCurrentPositionFunctionName = "GetCurrentPosition";
+export const GetClosestBucketFunctionName = "FindClosestBucket";
+export const GetClosestShovelFunctionName = "FindClosestShovl";
+export const GetClosestFountainFunctionName = "FindClosestFountain";
+export const GetClosestSoilFunctionName = "FindClosestSoil";
+export const GetClosestGrainFunctionName = "FindClosestGrain";
+export const SetupFunctionName = "Setup";

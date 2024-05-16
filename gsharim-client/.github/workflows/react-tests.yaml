@@ -1,0 +1,36 @@
+name: react tests
+run-name: ${{ github.actor }} push changes to ${{ github.head_ref || github.ref_name }} 🚀
+
+env:
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+on:
+  push:
+    branches:
+      - dev
+      - master
+  pull_request:
+    branches: 
+      - dev
+      - master
+
+jobs:
+  test:
+    name: Test on node
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - name: install deps
+      run: npm ci
+    - name: run lint
+      run: npm run lint
+    - name: run tests
+      run: npm run ci-test

@@ -1,0 +1,52 @@
+name: Staging Deployment
+
+on:  
+  push:
+    branches:
+      - 'dev'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      NODE_OPTIONS: "--max_old_space_size=4096"
+    environment:
+      name: staging
+      url: ${{ steps.generateUrl.outputs.URL }}
+    outputs:
+      URL: ${{ steps.generateUrl.outputs.URL }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: generate url
+        id: generateUrl
+        run: |
+          echo URL=https://staging-gsharim.surge.sh >> $GITHUB_OUTPUT
+      - name: install deps
+        run: npm ci
+      - name: run lint
+        run: npm run lint
+      - name: run tests
+        run: npm run ci-test
+      - name: build react app
+        run: |
+          npm run build:staging
+          cp build/index.html build/200.html
+      - name: Deploy to gsharim.surge.sh
+        run: |
+          npx surge --project ./build --domain ${{ steps.generateUrl.outputs.URL }} --token ${{ secrets.surge_token }}
+  lighthouse:
+      runs-on: ubuntu-latest
+      needs: deploy
+      permissions:
+        contents: read
+      steps:
+        - name: Lighthouse
+          uses: foo-software/lighthouse-check-action@master
+          with:
+            urls: '${{needs.deploy.outputs.URL}}'
+            device: 'desktop'
+            gitAuthor: ${{ github.actor }}
+            prCommentEnabled: 'false'
+            gitHubAccessToken: ${{ secrets.GITHUB_TOKEN }}

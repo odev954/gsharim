@@ -1,0 +1,130 @@
+import Image1 from "assets/chapter/LessonIconExamples/1.svg";
+import Image2 from "assets/chapter/LessonIconExamples/2.svg";
+import Image3 from "assets/chapter/LessonIconExamples/3.svg";
+import Image4 from "assets/chapter/LessonIconExamples/4.svg";
+import Image5 from "assets/chapter/LessonIconExamples/5.svg";
+import { LessonMetadata } from "@eco8200/data-models";
+
+export const lessonMetadataMockList: LessonMetadata[] = [
+	{
+		name: "בדיקה ראשונה",
+		thumbnailUrl: Image1,
+		description: "description placeholder",
+		id: "0",
+		progress: 65,
+		locked: false,
+	},
+	{
+		name: "בדיקה שנייה",
+		thumbnailUrl: Image2,
+		description: "description placeholder",
+		id: "1",
+		progress: 90,
+		locked: false,
+	},
+	{
+		name: "בדיקה שלישית",
+		thumbnailUrl: Image3,
+		description: "description placeholder",
+		id: "2",
+		progress: 33,
+		locked: false,
+	},
+	{
+		name: "בדיקה רביעית",
+		thumbnailUrl: Image4,
+		description: "description placeholder",
+		id: "3",
+		locked: true,
+	},
+	{
+		name: "בדיקה חמישית",
+		thumbnailUrl: Image5,
+		description: "description placeholder",
+		id: "4",
+		locked: true,
+	},
+	{
+		name: "בדיקה שישית",
+		thumbnailUrl: Image1,
+		description: "description placeholder",
+		id: "5",
+		progress: 65,
+		locked: false,
+	},
+	{
+		name: "בדיקה שביעית",
+		thumbnailUrl: Image2,
+		description: "description placeholder",
+		id: "6",
+		progress: 90,
+		locked: false,
+	},
+	{
+		name: "בדיקה שמינית",
+		thumbnailUrl: Image3,
+		description: "description placeholder",
+		id: "7",
+		progress: 33,
+		locked: false,
+	},
+	{
+		name: "בדיקה תשיעית",
+		thumbnailUrl: Image4,
+		description: "description placeholder",
+		id: "8",
+		locked: true,
+	},
+	{
+		name: "בדיקה עשירית",
+		thumbnailUrl: Image5,
+		description: "description placeholder",
+		id: "9",
+		locked: true,
+	},
+	{
+		name: "בדיקה אחת-עשרה",
+		thumbnailUrl: Image1,
+		description: "description placeholder",
+		id: "10",
+		progress: 65,
+		locked: false,
+	},
+	{
+		name: "בדיקה שתיים-עשרה",
+		thumbnailUrl: Image2,
+		description: "description placeholder",
+		id: "11",
+		progress: 90,
+		locked: false,
+	},
+	{
+		name: "בדיקה שלוש-עשרה",
+		thumbnailUrl: Image3,
+		description: "description placeholder",
+		id: "12",
+		progress: 33,
+		locked: false,
+	},
+	{
+		name: "בדיקה ארבע-עשרה",
+		thumbnailUrl: Image4,
+		description: "description placeholder",
+		id: "13",
+		locked: true,
+	},
+	{
+		name: "בדיקה ארבע-עשרה",
+		thumbnailUrl: Image4,
+		description: "description placeholder",
+		id: "14",
+		locked: true,
+	},
+	{
+		name: "בדיקה חמש-עשרה",
+		thumbnailUrl: Image5,
+		description: "description placeholder",
+		id: "15",
+		locked: true,
+	},
+];

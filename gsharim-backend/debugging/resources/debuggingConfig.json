@@ -1,0 +1,5 @@
+{
+	"dynamoContainerName": "dynamo_for_debugging",
+	"dynamoPort": 8000,
+	"jsonServerPort": 6666
+}

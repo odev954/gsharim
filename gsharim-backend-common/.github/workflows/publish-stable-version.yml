@@ -1,0 +1,34 @@
+name: Publish stable version
+
+on:
+    push:
+        branches:
+            - master
+        paths:
+            - "package.json"
+            - "package-lock.json"
+            - "README.md"
+            - "**.ts"
+            - "**ignore"
+            - ".releaserc.json"
+            - "!node_modules/**"
+    workflow_dispatch:
+
+jobs:
+    publish-pkg:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+            - name: setup git config
+              run: |
+                  git config user.name "GitHub Actions Bot"
+                  git config user.email "<>"
+            - run: npm run build
+            - uses: JS-DevTools/npm-publish@v1
+              with:
+                  token: ${{ secrets.NPM_AUTOMATION_TOKEN }}
+                  access: "public"
+                  package: "./lib/package.json"

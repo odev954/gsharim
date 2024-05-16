@@ -1,0 +1,53 @@
+name: PR Preview
+
+on:  
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      NODE_OPTIONS: "--max_old_space_size=4096"
+    environment:
+      name: development
+      url: ${{ steps.generateUrl.outputs.URL }}
+    outputs:
+      URL: ${{ steps.generateUrl.outputs.URL }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: convert branch to url
+        id: generateUrl
+        run: |
+          branch_name=${{ github.head_ref || github.ref_name }}
+          BRANCH_URL="${branch_name//\//-}"
+          echo URL=https://$BRANCH_URL-gsharim.surge.sh >> $GITHUB_OUTPUT
+      - name: run build
+        run: |
+          npm ci
+          npm run build:dev
+          cp build/index.html build/200.html
+      - name: Deploy to gsharim.surge.sh
+        run: |
+          npx surge --project ./build --domain ${{ steps.generateUrl.outputs.URL }} --token ${{ secrets.surge_token }}
+  lighthouse:
+      runs-on: ubuntu-latest
+      needs: preview
+      permissions:
+        contents: read
+        pull-requests: write
+      steps:
+        - name: Lighthouse
+          uses: foo-software/lighthouse-check-action@master
+          with:
+            urls: '${{needs.preview.outputs.URL}}'
+            device: 'desktop'
+            gitAuthor: ${{ github.actor }}
+            prCommentEnabled: 'true'
+            gitHubAccessToken: ${{ secrets.GITHUB_TOKEN }}

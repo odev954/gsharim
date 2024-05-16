@@ -1,0 +1,135 @@
+name: Master Versioning & Publish
+
+on:
+    pull_request:
+        branches:
+            - master
+        types:
+            - closed
+        paths:
+            - "package.json"
+            - "package-lock.json"
+            - "README.md"
+            - "**.ts"
+            - "!**ignore"
+            - "!node_modules/**"
+
+jobs:
+    version-major:
+        if: ${{ github.event.pull_request.merged == true && startsWith(github.head_ref || github.ref_name, 'major-') }}
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@master
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+            - name: setup git config
+              run: |
+                  git config user.name "GitHub Actions Bot"
+                  git config user.email "<>"
+            - run: npm version major --no-git-tag-version
+            - uses: stefanzweifel/git-auto-commit-action@v4
+              with:
+                  commit_message: automated version updated
+                  branch: master
+                  file_pattern: "package*.json"
+
+    version-minor:
+        if: ${{ github.event.pull_request.merged == true && startsWith(github.head_ref || github.ref_name, 'minor-') }}
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@master
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+            - name: setup git config
+              run: |
+                  git config user.name "GitHub Actions Bot"
+                  git config user.email "<>"
+            - run: npm version minor --no-git-tag-version
+            - uses: stefanzweifel/git-auto-commit-action@v4
+              with:
+                  commit_message: automated version updated
+                  branch: master
+                  file_pattern: "package*.json"
+
+    version-patch:
+        if: ${{ github.event.pull_request.merged == true && startsWith(github.head_ref || github.ref_name, 'patch-') }}
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@master
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+            - name: setup git config
+              run: |
+                  git config user.name "GitHub Actions Bot"
+                  git config user.email "<>"
+            - run: npm version patch --no-git-tag-version
+            - uses: stefanzweifel/git-auto-commit-action@v4
+              with:
+                  commit_message: automated version updated
+                  branch: master
+                  file_pattern: "package*.json"
+
+    publish-pkg:
+        runs-on: ubuntu-latest
+        if: ${{ always() }}
+        needs: [version-patch, version-minor, version-major]
+        steps:
+            - uses: actions/checkout@v3
+              with:
+                  ref: master
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+            - name: Check package version
+              id: cpv
+              uses: PostHog/check-package-version@v2
+            - name: Compile package
+              run: npm run build
+            - name: Echo versions
+              run: |
+                  echo "Committed version: ${{ steps.cpv.outputs.committed-version }}"
+                  echo "Published version: ${{ steps.cpv.outputs.published-version }}"
+            - name: Publish
+              uses: JS-DevTools/npm-publish@v1
+              if: ${{ steps.cpv.outputs.is-new-version == 'true' }}
+              with:
+                  token: ${{ secrets.NPM_AUTOMATION_TOKEN }}
+                  access: "public"
+                  check-version: true
+                  package: './lib/package.json'
+    publish-gpr:
+        runs-on: ubuntu-latest
+        needs: publish-pkg
+        permissions:
+            contents: read
+            packages: write
+        steps:
+            - uses: actions/checkout@v3
+              with:
+                  ref: master
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+                  registry-url: https://npm.pkg.github.com/
+            - name: Check package version
+              id: cpv
+              uses: PostHog/check-package-version@v2
+            - name: Compile package
+              run: npm run build
+            - name: Move to "lib"
+              run: cd lib
+            - name: Echo versions
+              run: |
+                  echo "Committed version: ${{ steps.cpv.outputs.committed-version }}"
+                  echo "Published version: ${{ steps.cpv.outputs.published-version }}"
+            - name: Publish
+              if: ${{ steps.cpv.outputs.is-new-version == 'true' }}
+              run: npm publish
+              env:
+                  NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}

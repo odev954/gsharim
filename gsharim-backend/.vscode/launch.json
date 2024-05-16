@@ -1,0 +1,53 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Debug ContentManager",
+			"console": "integratedTerminal",
+			"program": "${workspaceFolder}/lib/lambdas/contentManager/node_modules/.bin/sls",
+			"windows": {
+				"program": "${workspaceRoot}/lib/lambdas/contentManager/node_modules/serverless/bin/serverless.js"
+			},
+			"cwd": "${workspaceFolder}/lib/lambdas/contentManager",
+			"args": [
+				"invoke",
+				"local",
+				"-f",
+				"functionToDebug",
+				"--path",
+				"${workspaceRoot}/debugging/debugEvent.json"
+			],
+			"preLaunchTask": "setup contentManager debug",
+			"postDebugTask": "clean contentManager debug",
+			"outFiles": [
+				"${workspaceFolder}/lib/lambdas/contentManager/.build/**/*.js"
+			]
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Debug ContentProvider",
+			"console": "integratedTerminal",
+			"program": "${workspaceFolder}/lib/lambdas/contentProvider/node_modules/.bin/sls",
+			"windows": {
+				"program": "${workspaceRoot}/lib/lambdas/contentProvider/node_modules/serverless/bin/serverless.js"
+			},
+			"cwd": "${workspaceFolder}/lib/lambdas/contentProvider",
+			"args": [
+				"invoke",
+				"local",
+				"-f",
+				"functionToDebug",
+				"--path",
+				"${workspaceRoot}/debugging/debugEvent.json"
+			],
+			"preLaunchTask": "setup contentProvider debug",
+			"postDebugTask": "clean contentProvider debug",
+			"outFiles": [
+				"${workspaceFolder}/lib/lambdas/contentProvider/.build/**/*.js"
+			]
+		}
+	]
+}

@@ -1,0 +1,60 @@
+name: Update stable version
+
+on:
+    pull_request:
+        branches:
+            - dev
+        types:
+            - closed
+        paths:
+            - "package.json"
+            - "package-lock.json"
+            - "README.md"
+            - "**.ts"
+            - "!**ignore"
+            - "!node_modules/**"
+    workflow_dispatch:
+
+jobs:
+    update-version:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@master
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+            - name: setup git config
+              run: |
+                  git config user.name "GitHub Actions Bot"
+                  git config user.email "<>"
+
+            - name: Configure Permissions
+              run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+            - name: Update major
+              id: update_major
+              if: ${{ github.event.pull_request.merged == true && startsWith(github.head_ref || github.ref_name, 'major-') }}
+              run: npm version major --no-git-tag-version
+
+            - name: Update minor
+              id: update_minor
+              if: ${{ github.event.pull_request.merged == true && startsWith(github.head_ref || github.ref_name, 'minor-') }}
+              run: npm version minor --no-git-tag-version
+
+            - name: Update patch
+              id: update_patch
+              if: ${{ github.event.pull_request.merged == true && startsWith(github.head_ref || github.ref_name, 'patch-') }}
+              run: npm version patch --no-git-tag-version
+
+            - uses: stefanzweifel/git-auto-commit-action@v4
+              with:
+                  commit_message: automated version updated
+                  branch: dev
+                  file_pattern: "package*.json"
+
+            - name: Create Pull Request
+              if: ${{ steps.update_patch.outcome == 'success' || steps.update_minor.outcome == 'success' || steps.update_major.outcome == 'success' }}
+              run: gh pr create -B master -H dev --title 'Automated update from dev' --body 'Updating changes from `${{ github.head_ref || github.ref_name }}`'
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

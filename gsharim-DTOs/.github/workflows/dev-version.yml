@@ -1,0 +1,68 @@
+name: Dev Version Handler
+
+on:
+    pull_request:
+        branches:
+            - master
+        types:
+            - opened
+jobs:
+    build-major:
+        if: ${{ startsWith(github.head_ref || github.ref_name, 'major-') }}
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+            - name: setup git config
+              run: |
+                  git config user.name "GitHub Actions Bot"
+                  git config user.email "<>"
+            - run: npm ci
+            - run: npm version premajor --preid=${{ github.head_ref || github.ref_name }} --no-git-tag-version
+            - uses: stefanzweifel/git-auto-commit-action@v4
+              with:
+                commit_message: automated version updated
+                branch: ${{ github.head_ref || github.ref_name }}
+                file_pattern: 'package*.json'
+
+    build-minor:
+        if: ${{ startsWith(github.head_ref || github.ref_name, 'minor-') }}
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+            - name: setup git config
+              run: |
+                  git config user.name "GitHub Actions Bot"
+                  git config user.email "<>"
+            - run: npm ci
+            - run: npm version preminor --preid=${{ github.head_ref || github.ref_name }} --no-git-tag-version
+            - uses: stefanzweifel/git-auto-commit-action@v4
+              with:
+                commit_message: automated version updated
+                branch: ${{ github.head_ref || github.ref_name }}
+                file_pattern: 'package*.json'
+
+    build-patch:
+        if: ${{ startsWith(github.head_ref || github.ref_name, 'patch-') }}
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+            - name: setup git config
+              run: |
+                  git config user.name "GitHub Actions Bot"
+                  git config user.email "<>"
+            - run: npm ci
+            - run: npm version prepatch --preid=${{ github.head_ref || github.ref_name }} --no-git-tag-version
+            - uses: stefanzweifel/git-auto-commit-action@v4
+              with:
+                commit_message: automated version updated
+                branch: ${{ github.head_ref || github.ref_name }}
+                file_pattern: 'package*.json'

@@ -1,0 +1,18 @@
+{
+	"name": "debugging-scripts",
+	"version": "1.0.0",
+	"description": "scripts to setup resources for lambda debugging",
+	"author": "8200/yanshuf team",
+	"license": "ISC",
+	"dependencies": {
+		"@aws-sdk/client-dynamodb": "^3.315.0",
+		"@aws-sdk/lib-dynamodb": "^3.315.0",
+		"@types/watch": "^1.0.3",
+		"aws-sdk": "^2.1360.0",
+		"child_process": "^1.0.2",
+		"typescript": "^5.0.4"
+	},
+	"devDependencies": {
+		"@types/aws-sdk": "^2.7.0"
+	}
+}

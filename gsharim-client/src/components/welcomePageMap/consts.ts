@@ -1,0 +1,9 @@
+export const distanceFromStart = "-100px";
+export const heightDivider = 500;
+export const originHeightDistance = 50;
+export const desktopLandmarkHeight = 29;
+export const desktopLandmarkWidth = 22;
+export const mobileLandmarkHeight = 13;
+export const mobileLandmarkWidth = 9;
+export const animationDelay = 1;
+export const minimumMapSize = 50;

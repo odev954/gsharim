@@ -1,0 +1,9 @@
+export const gameUrl = "/mazeGame";
+export const gameName = "mazeGame";
+export const WinEventName = "Win";
+export const SetupFunctionName = "setup";
+export const RightFunctionName = "Right";
+export const LeftFunctionName = "Left";
+export const UpFunctionName = "Up";
+export const DownFunctionName = "Down";
+export const ResetFunctionName = "Reset";

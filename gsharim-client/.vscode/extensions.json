@@ -1,0 +1,12 @@
+{
+	"recommendations": [
+		"github.vscode-pull-request-github",
+		"amazonwebservices.aws-toolkit-vscode",
+		"dbaeumer.vscode-eslint",
+		"ms-vscode.vscode-typescript-next",
+		"eamodio.gitlens",
+		"zixuanchen.vitest-explorer",
+		"codium.codium",
+		"github.vscode-github-actions"
+	]
+}
